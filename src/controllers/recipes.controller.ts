@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getRecipesFromSpoonacular } from '../services/spoonacular.service';
+import { getRecipesFromSpoonacular, getRecipesWithDetails } from '../services/spoonacular.service';
 import { db } from '../config/db';
 
 export const suggestRecipes = async (req: Request, res: Response) => {
@@ -13,6 +13,31 @@ export const suggestRecipes = async (req: Request, res: Response) => {
   }
 
   res.json(recipes);
+};
+
+// Nouvelle méthode pour suggérer des recettes avec détails complets
+export const suggestRecipesWithDetails = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const ingredients = req.query.ingredients as string;
+    
+    if (!ingredients) {
+      res.status(400).json({ message: 'Ingredients parameter is required' });
+      return;
+    }
+    
+    const recipes = await getRecipesWithDetails(ingredients);
+    const userId = (req as any).user?.id;
+
+    // Sauvegarde dans l'historique
+    if (userId) {
+      await db.query('INSERT INTO search_history (user_id, ingredients) VALUES (?, ?)', [userId, ingredients]);
+    }
+
+    res.json(recipes);
+  } catch (error) {
+    console.error('Error suggesting recipes with details:', error);
+    res.status(500).json({ message: 'Error suggesting recipes with details' });
+  }
 };
 
 // Nouvelle méthode pour récupérer l'historique de recherche

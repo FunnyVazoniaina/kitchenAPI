@@ -52,3 +52,73 @@ export const removeFavorite = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Error removing favorite' });
   }
 };
+
+export const getUserProfile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).user.id;
+    
+    // Récupération des informations de l'utilisateur
+    const [users] = await db.query(
+      'SELECT id, name, email, created_at FROM users WHERE id = ?',
+      [userId]
+    );
+    
+    if (!users || (users as any[]).length === 0) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+    
+    const user = (users as any[])[0];
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: 'Error fetching user profile' });
+  }
+};
+
+export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).user.id;
+    const { name, email } = req.body;
+    
+    // Vérification des données requises
+    if (!name && !email) {
+      res.status(400).json({ message: 'At least one field (name or email) is required' });
+      return;
+    }
+    
+    // Construction de la requête dynamique
+    let query = 'UPDATE users SET ';
+    const params = [];
+    const updates = [];
+    
+    if (name) {
+      updates.push('name = ?');
+      params.push(name);
+    }
+    
+    if (email) {
+      updates.push('email = ?');
+      params.push(email);
+    }
+    
+    query += updates.join(', ');
+    query += ' WHERE id = ?';
+    params.push(userId);
+    
+    // Mise à jour des informations de l'utilisateur
+    const [result] = await db.query(query, params);
+    
+    if ((result as any).affectedRows === 0) {
+      res.status(404).json({ message: 'User not found or no changes made' });
+      return;
+    }
+    
+    res.json({ message: 'User profile updated successfully' });
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ message: 'Error updating user profile' });
+  }
+};
+
+
