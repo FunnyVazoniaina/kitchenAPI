@@ -17,17 +17,13 @@ export const addFavorite = async (req: Request, res: Response) => {
 export const getFavorites = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
-    
-    // Récupération des recettes favorites de l'utilisateur
-    const [favorites] = await db.query(
+      const [favorites] = await db.query(
       `SELECT r.id, r.title, r.image_url as image
        FROM recipes r
        JOIN user_favorites uf ON r.id = uf.recipe_id
        WHERE uf.user_id = ?`,
       [userId]
     );
-    
-    // Renvoyer directement le tableau de favoris
     res.json(favorites);
   } catch (error) {
     console.error('Error fetching favorites:', error);
@@ -39,9 +35,7 @@ export const removeFavorite = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
     const { recipeId } = req.params;
-    
-    // Suppression du favori
-    await db.query(
+      await db.query(
       'DELETE FROM user_favorites WHERE user_id = ? AND recipe_id = ?',
       [userId, recipeId]
     );
@@ -56,8 +50,6 @@ export const removeFavorite = async (req: Request, res: Response) => {
 export const getUserProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.id;
-    
-    // Récupération des informations de l'utilisateur
     const [users] = await db.query(
       'SELECT id, name, email, created_at FROM users WHERE id = ?',
       [userId]
@@ -67,7 +59,6 @@ export const getUserProfile = async (req: Request, res: Response): Promise<void>
       res.status(404).json({ message: 'User not found' });
       return;
     }
-    
     const user = (users as any[])[0];
     res.json(user);
   } catch (error) {
@@ -80,14 +71,11 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
   try {
     const userId = (req as any).user.id;
     const { name, email } = req.body;
-    
-    // Vérification des données requises
+
     if (!name && !email) {
       res.status(400).json({ message: 'At least one field (name or email) is required' });
       return;
     }
-    
-    // Construction de la requête dynamique
     let query = 'UPDATE users SET ';
     const params = [];
     const updates = [];
@@ -106,7 +94,6 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
     query += ' WHERE id = ?';
     params.push(userId);
     
-    // Mise à jour des informations de l'utilisateur
     const [result] = await db.query(query, params);
     
     if ((result as any).affectedRows === 0) {
