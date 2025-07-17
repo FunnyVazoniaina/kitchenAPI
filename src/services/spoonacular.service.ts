@@ -1,10 +1,8 @@
 import axios from 'axios';
-import dotenv from 'dotenv';
-
-dotenv.config();
+require('dotenv').config();
 
 const apiKey = process.env.SPOONACULAR_API_KEY;
-const baseURL = 'https://api.spoonacular.com';
+const baseURL =  process.env.SPOONACULAR_URL_BASE;
 
 if (!apiKey) {
   throw new Error('SPOONACULAR_API_KEY is missing in .env file');
@@ -29,7 +27,6 @@ export const getRecipesFromSpoonacular = async (ingredients: string) => {
   }
 };
 
-// Nouvelle fonction pour obtenir les détails complets d'une recette
 export const getRecipeDetails = async (recipeId: number) => {
   try {
     const response = await axios.get(`${baseURL}/recipes/${recipeId}/information`, {
@@ -46,13 +43,10 @@ export const getRecipeDetails = async (recipeId: number) => {
   }
 };
 
-// Fonction pour récupérer les recettes avec leurs détails complets
 export const getRecipesWithDetails = async (ingredients: string) => {
   try {
-    // D'abord, récupérer les recettes de base
-    const recipes = await getRecipesFromSpoonacular(ingredients);
-    
-    // Ensuite, récupérer les détails pour chaque recette
+  
+    const recipes = await getRecipesFromSpoonacular(ingredients);   
     const recipesWithDetails = await Promise.all(
       recipes.map(async (recipe: any) => {
         const details = await getRecipeDetails(recipe.id);
