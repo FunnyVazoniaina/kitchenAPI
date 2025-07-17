@@ -1,19 +1,17 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
 import recipeRoutes from './routes/recipes.routes';
 import userRoutes from './routes/user.routes';
 import { Request, Response } from 'express';
-
-dotenv.config();
+require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
   origin: 'http://localhost:5173', 
-  credentials: true                // Autoriser les cookies
+  credentials: true                
 }));
 app.use(express.json());
 
