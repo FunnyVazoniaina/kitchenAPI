@@ -21,10 +21,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/recipes', recipeRoutes);
 app.use('/api/user', userRoutes);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Food Suggester API');
-});
-
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
