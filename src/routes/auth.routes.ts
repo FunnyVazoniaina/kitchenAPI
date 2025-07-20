@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { register, login } from '../controllers/auth.controller';
+import { upload } from '../middlewares/upload';
 
 const router = Router();
 
-// Define routes
-router.post('/register', register);
+router.post('/register', upload.single('avatar'), register); 
 router.post('/login', login);
 
 export default router;

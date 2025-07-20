@@ -7,7 +7,6 @@ export const suggestRecipes = async (req: Request, res: Response) => {
   const recipes = await getRecipesFromSpoonacular(ingredients);
   const userId = (req as any).user?.id;
 
-  // Sauvegarde dans l'historique
   if (userId) {
     await db.query('INSERT INTO search_history (user_id, ingredients) VALUES (?, ?)', [userId, ingredients]);
   }
@@ -15,7 +14,6 @@ export const suggestRecipes = async (req: Request, res: Response) => {
   res.json(recipes);
 };
 
-// Nouvelle méthode pour suggérer des recettes avec détails complets
 export const suggestRecipesWithDetails = async (req: Request, res: Response): Promise<void> => {
   try {
     const ingredients = req.query.ingredients as string;
@@ -28,7 +26,6 @@ export const suggestRecipesWithDetails = async (req: Request, res: Response): Pr
     const recipes = await getRecipesWithDetails(ingredients);
     const userId = (req as any).user?.id;
 
-    // Sauvegarde dans l'historique
     if (userId) {
       await db.query('INSERT INTO search_history (user_id, ingredients) VALUES (?, ?)', [userId, ingredients]);
     }
@@ -40,7 +37,6 @@ export const suggestRecipesWithDetails = async (req: Request, res: Response): Pr
   }
 };
 
-// Nouvelle méthode pour récupérer l'historique de recherche
 export const getSearchHistory = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.id;
@@ -61,7 +57,6 @@ export const getSearchHistory = async (req: Request, res: Response): Promise<voi
   }
 };
 
-// Nouvelle méthode pour supprimer un élément spécifique de l'historique
 export const deleteSearchHistoryItem = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.id;
@@ -84,7 +79,6 @@ export const deleteSearchHistoryItem = async (req: Request, res: Response): Prom
   }
 };
 
-// Nouvelle méthode pour supprimer tout l'historique de recherche
 export const clearSearchHistory = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.id;
