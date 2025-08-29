@@ -1,0 +1,21 @@
+# Ignorer node_modules
+node_modules
+
+# Ignorer fichiers temporaires
+*.log
+*.tmp
+
+# Ignorer fichiers de build
+dist
+build
+
+# Ignorer fichiers de config locaux
+.env
+.env.local
+
+# Ignorer tout sauf un fichier précis
+!.env.example
+
+# Ignorer Git
+.git
+.gitignore
