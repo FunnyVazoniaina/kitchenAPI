@@ -4,7 +4,8 @@ import {
   getFavorites, 
   removeFavorite, 
   getUserProfile, 
-  updateUserProfile 
+  updateUserProfile,
+  changePassword
 } from '../controllers/user.controller';
 import { authenticateToken } from '../middlewares/auth.middleware';
 
@@ -18,5 +19,6 @@ router.delete('/favorites/:recipeId', authenticateToken, removeFavorite);
 // Routes pour le profil utilisateur
 router.get('/profile', authenticateToken, getUserProfile);
 router.put('/profile', authenticateToken, updateUserProfile);
+router.put('/change-password', authenticateToken, changePassword);
 
 export default router;
