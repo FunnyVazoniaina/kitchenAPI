@@ -108,4 +108,37 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
   }
 };
 
+// change password
+export const changePassword = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = (req as any).user.id;
+    const { currentPassword, newPassword } = req.body;
 
+    if (!currentPassword || !newPassword) {
+      res.status(400).json({ message: 'Current password and new password are required' });
+      return;
+    }
+
+    // Check if the current password is correct
+    const [users] = await db.query(
+      'SELECT * FROM users WHERE id = ? AND password = ?',
+      [userId, currentPassword]
+    );
+
+    if (!users || (users as any[]).length === 0) {
+      res.status(401).json({ message: 'Invalid current password' });
+      return;
+    }
+
+    // Update the password
+    await db.query(
+      'UPDATE users SET password = ? WHERE id = ?',
+      [newPassword, userId]
+    );
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ message: 'Error changing password' });
+  }
+};
